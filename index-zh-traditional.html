@@ -302,15 +302,6 @@
     </main>
   </div>
 
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script type="text/javascript">
-    // Initialize EmailJS with your Public Key
-    (function() {
-      emailjs.init('ZBBN6ocQsF8cP-w-a');
-    })();
-  </script>
-
   <script>
     // Smooth scrolling for navigation links
     document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
@@ -353,7 +344,7 @@
       });
     });
 
-    // EmailJS Form Submission
+    // Google Apps Script Form Submission with Countdown
     document.getElementById('contact-form').addEventListener('submit', function(event) {
       event.preventDefault();
       
@@ -361,37 +352,61 @@
       const submitButton = form.querySelector('button[type="submit"]');
       const statusDiv = document.getElementById('form-status');
       
-      // Disable button and show loading state
+      // Disable button and show countdown
       submitButton.disabled = true;
       submitButton.textContent = '發送中...';
       statusDiv.style.display = 'block';
-      statusDiv.textContent = '正在發送您的留言...';
       statusDiv.style.color = '#8b7a68';
       
-      // Send email to therapist
-      emailjs.sendForm('service_xo0xs3j', 'template_302obkv', form)
-        .then(function() {
-          // Send auto-reply to client
-          return emailjs.sendForm('service_xo0xs3j', 'template_dsh8y9r', form);
-        })
-        .then(function() {
-          statusDiv.textContent = '留言發送成功！我會儘快回覆您。';
-          statusDiv.style.color = '#4a9b5c';
-          form.reset();
-          
-          // Reset button after 3 seconds
-          setTimeout(function() {
-            submitButton.disabled = false;
-            submitButton.textContent = '發送留言';
-            statusDiv.style.display = 'none';
-          }, 3000);
-        }, function(error) {
-          statusDiv.textContent = '發送失敗。請直接發送電子郵件。';
-          statusDiv.style.color = '#c74444';
+      let countdown = 5;
+      statusDiv.textContent = '正在發送您的留言... ' + countdown;
+      
+      const countdownInterval = setInterval(function() {
+        countdown--;
+        if (countdown > 0) {
+          statusDiv.textContent = '正在發送您的留言... ' + countdown;
+        }
+      }, 1000);
+      
+      // Collect form data
+      const formData = {
+        from_name: form.querySelector('[name="from_name"]').value,
+        reply_to: form.querySelector('[name="reply_to"]').value,
+        phone: form.querySelector('[name="phone"]').value,
+        subject: form.querySelector('[name="subject"]').value,
+        message: form.querySelector('[name="message"]').value
+      };
+      
+      // Send to Google Apps Script
+      fetch('https://script.google.com/macros/s/AKfycbyFJsHWzGDmfCUakE-hE5N_-zziuCUhI75VdCnIbI4whR8BgRADSjXJUoxuqgZB7vfQuA/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(function() {
+        clearInterval(countdownInterval);
+        statusDiv.textContent = '已發送！我會儘快回覆您。';
+        statusDiv.style.color = '#4a9b5c';
+        form.reset();
+        
+        // Reset button after 3 seconds
+        setTimeout(function() {
           submitButton.disabled = false;
           submitButton.textContent = '發送留言';
-          console.error('EmailJS error:', error);
-        });
+          statusDiv.style.display = 'none';
+        }, 3000);
+      })
+      .catch(function(error) {
+        clearInterval(countdownInterval);
+        statusDiv.textContent = '發送失敗。請直接發送電子郵件。';
+        statusDiv.style.color = '#c74444';
+        submitButton.disabled = false;
+        submitButton.textContent = '發送留言';
+        console.error('Error:', error);
+      });
     });
   </script>
 
