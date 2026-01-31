@@ -29,7 +29,7 @@
     <p class="subtitle">心理咨询与心理治疗</p>
     <div class="header-cta">
       <a href="#contact" class="cta-button">电邮联系我</a>
-      <a href="mailto:jennifer.wei.du@gmail.com" class="cta-button secondary">优惠咨询</a>
+      <a href="#contact" class="cta-button secondary">减免费用咨询</a>
     </div>
   </header>
 
@@ -358,12 +358,12 @@
       statusDiv.style.display = 'block';
       statusDiv.style.color = '#8b7a68';
       
-      let countdown = 5;
+      let countdown = 3;
       statusDiv.textContent = '正在发送您的留言... ' + countdown;
       
       const countdownInterval = setInterval(function() {
         countdown--;
-        if (countdown > 0) {
+        if (countdown >= 0) {
           statusDiv.textContent = '正在发送您的留言... ' + countdown;
         }
       }, 1000);

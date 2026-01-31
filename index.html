@@ -27,7 +27,7 @@
     <p class="subtitle">Counselling & Psychotherapy</p>
     <div class="header-cta">
       <a href="#contact" class="cta-button">CONTACT ME BY EMAIL</a>
-      <a href="mailto:jennifer.wei.du@gmail.com" class="cta-button secondary">Reduced Fee Consultation</a>
+      <a href="#contact" class="cta-button secondary">Reduced Fee Consultation</a>
     </div>
   </header>
 
@@ -337,12 +337,12 @@
       statusDiv.style.display = 'block';
       statusDiv.style.color = '#8b7a68';
       
-      let countdown = 5;
+      let countdown = 3;
       statusDiv.textContent = 'Sending your message... ' + countdown;
       
       const countdownInterval = setInterval(function() {
         countdown--;
-        if (countdown > 0) {
+        if (countdown >= 0) {
           statusDiv.textContent = 'Sending your message... ' + countdown;
         }
       }, 1000);
